@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from dependency_injector import providers
 
-from api.v1.routes import routers as v1_routers
-from core.config import configs
-from core.container import Container
-from util.class_object import singleton
+from src.core.config import configs
+from src.core.database import Database
+from src.core.predict import router as predict_router
+from src.core.user_predictions import router as user_predictions_router
+from src.auth.auth import router as auth_router
 
 
-@singleton
 class AppCreator:
     def __init__(self):
         # set app default
@@ -17,9 +18,7 @@ class AppCreator:
             version="0.0.1",
         )
 
-        # set db and container
-        self.container = Container()
-        self.db = self.container.db()
+        self.db = providers.Singleton(Database, db_url=configs.DATABASE_URI)()
         self.db.create_database()
 
         # set cors
@@ -37,10 +36,11 @@ class AppCreator:
         def root():
             return "service is working"
 
-        self.app.include_router(v1_routers, prefix=configs.API_V1_STR)
+        self.app.include_router(auth_router, prefix="")
+        self.app.include_router(predict_router, prefix="")
+        self.app.include_router(user_predictions_router, prefix="")
 
 
 app_creator = AppCreator()
 app = app_creator.app
 db = app_creator.db
-container = app_creator.container
