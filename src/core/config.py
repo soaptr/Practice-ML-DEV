@@ -65,10 +65,11 @@ class Configs(BaseSettings):
     PAGE_SIZE: int = 20
     ORDERING: str = "-id"
 
-    LOGREG_PATH: str = "src/pickle_models/log_reg.pkl"
-    RANDFOREST_PATH: str = "src/pickle_models/rand_forest.pkl"
-    XGBOOST_PATH: str = "src/pickle_models/xgb_classifier.pkl"
-    SCALER_PATH: str = "src/pickle_models/log_reg.pkl"
+    LOGREG_PATH: str = "src/pickle-models/log_reg.pkl"
+    SVM_PATH: str = "src/pickle-models/svm.pkl"
+    RANDFOREST_PATH: str = "src/pickle-models/rand_forest.pkl"
+    XGBOOST_PATH: str = "src/pickle-models/xgb_classifier.pkl"
+    SCALER_PATH: str = "src/pickle-models/std_scaler.pkl"
 
     class Config:
         case_sensitive = True

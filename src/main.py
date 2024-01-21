@@ -5,7 +5,7 @@ from dependency_injector import providers
 from src.core.config import configs
 from src.core.database import Database
 from src.core.predict import router as predict_router
-from src.core.user_predictions import router as user_predictions_router
+from src.core.routes import router as info_router
 from src.auth.auth import router as auth_router
 
 
@@ -38,7 +38,7 @@ class AppCreator:
 
         self.app.include_router(auth_router, prefix="")
         self.app.include_router(predict_router, prefix="")
-        self.app.include_router(user_predictions_router, prefix="")
+        self.app.include_router(info_router, prefix="")
 
 
 app_creator = AppCreator()

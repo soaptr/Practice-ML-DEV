@@ -15,6 +15,7 @@ class Predictor(SQLModel, table=True):
     name: str = Field(unique=True, nullable=False)
     cost: float = Field(ge=0.0, nullable=False)
     path: str = Field(nullable=False)
+    need_scale: bool = Field(nullable=False)
     predictions: List["Prediction"] = Relationship(back_populates="predictor")
 
 
@@ -28,7 +29,8 @@ class Prediction(SQLModel, table=True):
     DIQ010: float = Field(nullable=False)  # Диагноз диабета
     LBXGLT: float = Field(nullable=False)  # Тест на толерантность к глюкозе
     LBXIN: float = Field(nullable=False)  # Уровень инсулина
-    result: float = Field()
+    result: int = Field(nullable=True)
+    # job_id: str = Field(nullable=True)
     user_id: int = Field(nullable=False, foreign_key="user.id")
     predictor_id: int = Field(nullable=False, foreign_key="predictor.id")
     user: User = Relationship(back_populates="predictions")

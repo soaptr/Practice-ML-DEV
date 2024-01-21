@@ -9,8 +9,19 @@ from src.model.models import User, Predictor, Prediction
 from src.core.config import configs
 
 
+# def get_db():
+#     with Database(db_url=configs.DATABASE_URI).session() as db:
+#         yield db
+
+
+engine = create_engine(configs.DATABASE_URI, echo=True)
+SessionLocal = orm.scoped_session(
+    orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
+)
+
+
 def get_db():
-    with Database(db_url=configs.DATABASE_URI).session() as db:
+    with SessionLocal() as db:
         yield db
 
 
@@ -40,15 +51,19 @@ class Database:
         User.metadata.create_all(self._engine)
         Predictor.metadata.create_all(self._engine)
         Prediction.metadata.create_all(self._engine)
-        with self.session() as session:
+        # with self.session() as session:
+        #     self._initialize_predictors(session)
+
+        # Инициализация начальных данных
+        with SessionLocal() as session:
             self._initialize_predictors(session)
 
     def _initialize_predictors(self, session: Session):
         if session.query(Predictor).count() == 0:
             predictors = [
-                Predictor(name="Логистическая регрессия", cost=30, path=configs.LOGREG_PATH),
-                Predictor(name="Случайный лес", cost=40, path=configs.RANDFOREST_PATH),
-                Predictor(name="XGBoost", cost=50, path=configs.XGBOOST_PATH)
+                Predictor(id=1, name="Логистическая регрессия", cost=30, path=configs.LOGREG_PATH, need_scale=True),
+                Predictor(id=2, name="Метод опорных векторов", cost=40, path=configs.SVM_PATH, need_scale=True),
+                Predictor(id=3, name="XGBoost", cost=50, path=configs.XGBOOST_PATH, need_scale=False)
             ]
             session.bulk_save_objects(predictors)
             session.commit()
