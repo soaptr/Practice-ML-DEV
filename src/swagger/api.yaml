@@ -1,0 +1,340 @@
+openapi: 3.1.0
+info:
+  title: fca-api
+  version: 0.0.1
+paths:
+  "/":
+    get:
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  "/token":
+    post:
+      summary: Login For Access Token
+      operationId: login_for_access_token_token_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              "$ref": "#/components/schemas/Body_login_for_access_token_token_post"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/register":
+    post:
+      summary: Register User
+      operationId: register_user_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserCreate"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/predict":
+    post:
+      summary: Make Prediction
+      operationId: make_prediction_predict_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PredictionInput"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+      security:
+      - OAuth2PasswordBearer: []
+  "/predictions/{prediction_id}":
+    get:
+      summary: Get Prediction
+      operationId: get_prediction_predictions__prediction_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: prediction_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Prediction Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PredictionOut"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/predictions":
+    get:
+      summary: Get Predictions
+      operationId: get_predictions_predictions_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  "$ref": "#/components/schemas/PredictionOut"
+                type: array
+                title: Response Get Predictions Predictions Get
+      security:
+      - OAuth2PasswordBearer: []
+  "/user":
+    get:
+      summary: Get Current User Data
+      operationId: get_current_user_data_user_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - OAuth2PasswordBearer: []
+  "/predictors":
+    get:
+      summary: Get All Predictors
+      operationId: get_all_predictors_predictors_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  "$ref": "#/components/schemas/PredictorOut"
+                type: array
+                title: Response Get All Predictors Predictors Get
+components:
+  schemas:
+    Body_login_for_access_token_token_post:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: password
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Body_login_for_access_token_token_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            "$ref": "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PredictionInput:
+      properties:
+        RIAGENDR:
+          type: number
+          title: Riagendr
+        PAQ605:
+          type: number
+          title: Paq605
+        BMXBMI:
+          type: number
+          title: Bmxbmi
+        LBXGLU:
+          type: number
+          title: Lbxglu
+        DIQ010:
+          type: number
+          title: Diq010
+        LBXGLT:
+          type: number
+          title: Lbxglt
+        LBXIN:
+          type: number
+          title: Lbxin
+        predictor_id:
+          type: integer
+          title: Predictor Id
+      type: object
+      required:
+      - RIAGENDR
+      - PAQ605
+      - BMXBMI
+      - LBXGLU
+      - DIQ010
+      - LBXGLT
+      - LBXIN
+      - predictor_id
+      title: PredictionInput
+    PredictionOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        status:
+          type: string
+          title: Status
+        result:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Result
+        predictor_name:
+          type: string
+          title: Predictor Name
+        RIAGENDR:
+          type: number
+          title: Riagendr
+        PAQ605:
+          type: number
+          title: Paq605
+        BMXBMI:
+          type: number
+          title: Bmxbmi
+        LBXGLU:
+          type: number
+          title: Lbxglu
+        DIQ010:
+          type: number
+          title: Diq010
+        LBXGLT:
+          type: number
+          title: Lbxglt
+        LBXIN:
+          type: number
+          title: Lbxin
+      type: object
+      required:
+      - id
+      - status
+      - predictor_name
+      - RIAGENDR
+      - PAQ605
+      - BMXBMI
+      - LBXGLU
+      - DIQ010
+      - LBXGLT
+      - LBXIN
+      title: PredictionOut
+    PredictorOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        cost:
+          type: number
+          title: Cost
+      type: object
+      required:
+      - id
+      - name
+      - cost
+      title: PredictorOut
+    UserCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - name
+      - password
+      title: UserCreate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: token
