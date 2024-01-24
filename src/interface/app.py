@@ -55,13 +55,13 @@ if choice == "Login":
         if login_data:
             user_data = get_user_data(login_data["access_token"])
             if user_data:
-                st.sidebar.success(f"Logged in as {user_data['name']}")
+                st.sidebar.success(f"Добрый день, {user_data['name']}")
                 st.sidebar.text(f"Баланс: {user_data['balance']}")
                 st.session_state['token'] = login_data["access_token"]
                 st.session_state['user_name'] = user_data['name']
                 st.session_state['balance'] = user_data['balance']
         else:
-            st.sidebar.error(f"Wrong login or password")
+            st.sidebar.error(f"Неверный логин или пароль")
 
 # Форма для регистрации
 elif choice == "Register":
@@ -100,6 +100,10 @@ if 'token' in st.session_state:
 
         if st.button("Предсказать"):
             prediction = send_prediction_data(selected_model_id, data_input, st.session_state['token'])
+            if prediction:
+                st.success("Предсказание отправлено")
+            else:
+                st.error("Недостаточно средств")
 
             # Обновление баланса пользователя после предсказания
             updated_user_data = get_user_data(st.session_state['token'])
