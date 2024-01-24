@@ -60,6 +60,8 @@ if choice == "Login":
                 st.session_state['token'] = login_data["access_token"]
                 st.session_state['user_name'] = user_data['name']
                 st.session_state['balance'] = user_data['balance']
+        else:
+            st.sidebar.error(f"Wrong login or password")
 
 # Форма для регистрации
 elif choice == "Register":
@@ -110,6 +112,7 @@ if 'token' in st.session_state:
     if st.button("Показать предсказания"):
         st.sidebar.text(f"Баланс: {st.session_state['balance']}")
         predictions = get_predictions(st.session_state['token'])
+        predictions_data = []
         for pred in predictions:
             if pred['result'] == 0:
                 result = "Adult"
@@ -117,13 +120,16 @@ if 'token' in st.session_state:
                 result = "Senior"
             else:
                 result = None
-            st.text(f"Модель: {pred['predictor_name']}, "
-                    f"Входные данные: [{pred['RIAGENDR']}, "
-                    f"{pred['PAQ605']}, "
-                    f"{pred['BMXBMI']}, "
-                    f"{pred['LBXGLU']}, "
-                    f"{pred['DIQ010']}, "
-                    f"{pred['LBXGLT']}, "
-                    f"{pred['LBXIN']}], "
-                    f"Статус: {pred['status']}, "
-                    f"Результат: {result}")
+
+            predictions_data.append({
+                "Модель": pred['predictor_name'],
+                "Входные данные": f"[{pred['RIAGENDR']}, {pred['PAQ605']}, {pred['BMXBMI']}, {pred['LBXGLU']}, "
+                                  f"{pred['DIQ010']}, {pred['LBXGLT']}, {pred['LBXIN']}]",
+                "Статус": pred['status'],
+                "Результат": result
+            })
+
+        if predictions_data:
+            st.table(predictions_data)
+        else:
+            st.write("Нет доступных предсказаний.")
